@@ -1,8 +1,8 @@
-=== Certify – Certificate Management & Verification ===
+=== Certify ===
 Contributors: amritkumarchanchal, SegWitz
 Tags: certificate, verification, education, course, management
 Requires at least: 4.0
-Tested up to: 6.8.1
+Tested up to: 6.8
 Requires PHP: 5.4
 Stable tag: 1.0
 License: GPLv2 or later

@@ -4,12 +4,14 @@
  * @version 1.0
  */
 /**
- * Plugin Name: Certify
+ * Plugin Name: Certify – Certificate Management & Verification
  * Plugin URI: https://amritkumarchanchal.com/Certify/
- * Description: Admin can enter course certificate codes , and details in the panel and user can verify their certificate using the cource code in the front end.
+ * Description: Admin can enter course certificate codes, and details in the panel and user can verify their certificate using the course code in the front end.
  * Version: 1.0
  * Author: Amrit Kumar Chanchal
  * Author URI: https://amritkumarchanchal.com/
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 if (! defined( 'ABSPATH' )) {
