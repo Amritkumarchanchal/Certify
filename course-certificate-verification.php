@@ -99,6 +99,65 @@ function course_certificate_include_bootsrap(){ ?>
 				width: 100%;
 			}
 		}
+		.cf-result-card {
+			background: #fff;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			padding: 20px;
+			margin: 20px 0;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+		.cf-row {
+			display: flex;
+			justify-content: space-between;
+			padding: 10px 0;
+			border-bottom: 1px solid #eee;
+		}
+		.cf-row:last-child {
+			border-bottom: none;
+		}
+		.cf-label {
+			font-weight: bold;
+			color: #333;
+		}
+		.cf-value {
+			color: #555;
+		}
+		.rs-heading {
+			text-align: center;
+		}
+		.search-table {
+		    border-spacing: 0 !important;
+		    border-top: none !important;
+		    border-right: none !important;
+		    border-left: none !important;
+	        min-width: 100%;
+	        border-bottom: 1px solid #ddd;
+		}
+		.search-table thead {
+			background-color: transparent;
+		}
+		.search-table thead tr th {
+			background-color: #000 !important;
+			color: #fff !important;
+			text-transform: uppercase;
+			text-align: center;
+		    padding: 15px 0px;
+		}
+		.search-table tbody tr td {
+			border-right: 1px solid #ddd;
+			padding: 14px 10px;
+			text-align: center;
+		}
+		.br-0 {
+			border-right: none !important
+		}
+		body {
+			overflow-x: hidden;
+		}
+		.btlr-10{ border-top-left-radius: 10px; }
+		.btrr-10{ border-top-right-radius: 10px; }
+		.bl-1{ border-left: 1px solid #ddd; }
 	</style>
 <?php }
 add_action('wp_head', 'course_certificate_include_bootsrap');
@@ -172,31 +231,20 @@ function course_certificate_certificate_search_form(){
 		global $wpdb;
 		$rows = $wpdb->get_results( "SELECT * FROM certify_course_certificates where certificate_code = '$code'"); 
 		if( !empty($rows) ){
-    foreach ( $rows as $data ){
-        $output .= '<h1 class="rs-heading">Search Result</h1></div>';
-        $output .= '<table class="search-table" style="width:100%">'
-            .'<tbody>'
-            .'<tr>'
-                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Candidate Name</th>'
-                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Course</th>'
-                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Hours Completed</th>'
-                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Certification No</th>'
-                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Date of Completion</th>'
-            .'</tr>'
-            .'<tr>'
-                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->student_name.'</td>'
-                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->course_name.'</td>'
-                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->course_hours.'</td>'
-                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->certificate_code.'</td>'
-                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.date("d/M/Y", strtotime($data->dob)).'</td>'
-            .'</tr>'
-            .'</tbody>'
-            .'</table>';
+        foreach ( $rows as $data ){
+            $output .= '<h1 class="rs-heading">Search Result</h1></div>';
+            $output .= '<div class="cf-result-card">
+                <div class="cf-row"><div class="cf-label">Candidate Name</div><div class="cf-value">'.$data->student_name.'</div></div>
+                <div class="cf-row"><div class="cf-label">Course</div><div class="cf-value">'.$data->course_name.'</div></div>
+                <div class="cf-row"><div class="cf-label">Hours Completed</div><div class="cf-value">'.$data->course_hours.'</div></div>
+                <div class="cf-row"><div class="cf-label">Certification No</div><div class="cf-value">'.$data->certificate_code.'</div></div>
+                <div class="cf-row"><div class="cf-label">Date of Completion</div><div class="cf-value">'.date("d/M/Y", strtotime($data->dob)).'</div></div>
+            </div>';
+        }
+    }else{
+        echo '<div class="danger">No result found against this code <strong>'.$code.'</strong></div>';
     }
-   		}else{
-   			echo '<div class="danger">No result found against this code <strong>'.$code.'</strong></div>';
-   		} 
-    } 
+}
 	$output .= '</div>';
 	return $output;
 }
