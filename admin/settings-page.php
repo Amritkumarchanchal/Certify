@@ -35,7 +35,7 @@ function course_certificate_admin_certificate_ui() {
 			$course = sanitize_text_field($_POST['course_name']);
 			$hours = sanitize_text_field($_POST['course_hours']);
 			$dob = sanitize_text_field($_POST['dob']);
-			$editid = sanitize_text_field($_POST['editid']);
+			$editid = isset($_POST['editid']) ? sanitize_text_field($_POST['editid']) : '';
 			$result = course_certificate_add_course_certificate($code, $name, $course, $hours, $dob, $editid);
 			if( $result == 1 ) {
 				if( $editid != "" ) {

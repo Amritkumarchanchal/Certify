@@ -265,7 +265,7 @@ function course_certificate_certificate_search_form(){
                 <div class="cf-row"><div class="cf-label">Candidate Name</div><div class="cf-value">'.$data->student_name.' '.$tick.'</div></div>
                 <div class="cf-row"><div class="cf-label">Course</div><div class="cf-value">'.$data->course_name.'</div></div>
                 <div class="cf-row"><div class="cf-label">Hours Completed</div><div class="cf-value">'.$data->course_hours.'</div></div>
-                <div class="cf-row"><div class="cf-label">Certification No</div><div class="cf-value">'.$data->certificate_code.' '.$tick.'</div></div>
+                <div class="cf-row"><div class="cf-label">Certification No</div><div class="cf-value">'.$data->certificate_code.'</div></div>
                 <div class="cf-row"><div class="cf-label">Date of Completion</div><div class="cf-value">'.date("d/M/Y", strtotime($data->dob)).'</div></div>
             </div>';
         }
