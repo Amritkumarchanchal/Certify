@@ -100,28 +100,55 @@ function course_certificate_include_bootsrap(){ ?>
 			}
 		}
 		.cf-result-card {
-			background: #fff;
-			border: 1px solid #ddd;
-			border-radius: 8px;
-			padding: 20px;
-			margin: 20px 0;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		    max-width: 500px;
+		    margin: 30px auto 0 auto;
+		    background: #fff;
+		    border-radius: 12px;
+		    box-shadow: 0 4px 24px rgba(67,93,125,0.10), 0 1.5px 4px rgba(67,93,125,0.08);
+		    padding: 32px 28px 24px 28px;
+		    font-family: "Varela Round", sans-serif;
+		    font-size: 16px;
+		    color: #222;
 		}
-		.cf-row {
-			display: flex;
-			justify-content: space-between;
-			padding: 10px 0;
-			border-bottom: 1px solid #eee;
+		.cf-result-card .cf-row {
+		    display: flex;
+		    justify-content: flex-start;
+		    align-items: center;
+		    padding: 14px 0;
+		    border-bottom: 1px solid #eceefb;
 		}
-		.cf-row:last-child {
-			border-bottom: none;
+		.cf-result-card .cf-row:last-child {
+		    border-bottom: none;
 		}
-		.cf-label {
-			font-weight: bold;
-			color: #333;
+		.cf-result-card .cf-label {
+		    flex: 0 0 180px;
+		    font-weight: 600;
+		    color: #435d7d;
+		    text-align: left;
+		    letter-spacing: 0.5px;
 		}
-		.cf-value {
-			color: #555;
+		.cf-result-card .cf-value {
+		    flex: 1;
+		    color: #222;
+		    text-align: left;
+		    font-weight: 400;
+		    padding-left: 48px; /* Start value from midpoint */
+		    word-break: break-word;
+		    position: relative;
+		    display: flex;
+		    align-items: center;
+		}
+		.cf-result-card .cf-tick {
+		    display: inline-block;
+		    width: 22px;
+		    height: 22px;
+		    margin-left: 10px;
+		    vertical-align: middle;
+		}
+		.cf-result-card .cf-tick svg {
+		    display: block;
+		    width: 100%;
+		    height: 100%;
 		}
 		.rs-heading {
 			text-align: center;
@@ -232,12 +259,13 @@ function course_certificate_certificate_search_form(){
 		$rows = $wpdb->get_results( "SELECT * FROM certify_course_certificates where certificate_code = '$code'"); 
 		if( !empty($rows) ){
         foreach ( $rows as $data ){
+            $tick = '<span class="cf-tick" title="Verified"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#27ae60"/><path d="M6 10.5L9 13.5L14 7.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
             $output .= '<h1 class="rs-heading">Search Result</h1></div>';
             $output .= '<div class="cf-result-card">
-                <div class="cf-row"><div class="cf-label">Candidate Name</div><div class="cf-value">'.$data->student_name.'</div></div>
+                <div class="cf-row"><div class="cf-label">Candidate Name</div><div class="cf-value">'.$data->student_name.' '.$tick.'</div></div>
                 <div class="cf-row"><div class="cf-label">Course</div><div class="cf-value">'.$data->course_name.'</div></div>
                 <div class="cf-row"><div class="cf-label">Hours Completed</div><div class="cf-value">'.$data->course_hours.'</div></div>
-                <div class="cf-row"><div class="cf-label">Certification No</div><div class="cf-value">'.$data->certificate_code.'</div></div>
+                <div class="cf-row"><div class="cf-label">Certification No</div><div class="cf-value">'.$data->certificate_code.' '.$tick.'</div></div>
                 <div class="cf-row"><div class="cf-label">Date of Completion</div><div class="cf-value">'.date("d/M/Y", strtotime($data->dob)).'</div></div>
             </div>';
         }
