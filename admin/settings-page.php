@@ -75,7 +75,7 @@ function course_certificate_admin_certificate_ui() {
         }
     }
 	global $wpdb;
-    $certificates = $wpdb->get_results( "SELECT * FROM segwitz_course_certificates");
+    $certificates = $wpdb->get_results( "SELECT * FROM certify_course_certificates");
     // Safely get 'pg' from $_GET, default to 1 if not set or not numeric
     $cpage = isset($_GET['pg']) && is_numeric($_GET['pg']) ? intval($_GET['pg']) : 1;
     $cpage_offset = $cpage > 0 ? (($cpage-1)*10) : 0;

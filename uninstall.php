@@ -5,7 +5,7 @@ if (! defined( 'ABSPATH' )) {
 }
 
 // De-activation
-function course_certificate_segwitz_certificate_onDeactivation() {
+function course_certificate_certify_certificate_onDeactivation() {
 
 	if ( ! current_user_can( 'activate_plugins' ) ) return;
 

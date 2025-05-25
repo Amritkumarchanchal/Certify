@@ -1,17 +1,15 @@
 <?php
 /**
- * @package certify
- * @version 2.0
+ * @package Certify
+ * @version 1.0
  */
 /**
- * Plugin Name: certify
- * Plugin URI: https://amritkumarchanchal.com/certificate-verification-wordpress-plugin/
+ * Plugin Name: Certify
+ * Plugin URI: https://amritkumarchanchal.com/Certify/
  * Description: Admin can enter course certificate codes , and details in the panel and user can verify their certificate using the cource code in the front end.
  * Version: 1.0
- * Author: amrit kumar chanchal
+ * Author: Amrit Kumar Chanchal
  * Author URI: https://amritkumarchanchal.com/
- * Modified by Amrit Kumar Chanchal on 2025-05-17
- * Original author: SegWitz
  */
 
 if (! defined( 'ABSPATH' )) {
@@ -115,8 +113,8 @@ if ( is_admin() ) {
 	require_once plugin_dir_path( __file__ ).'admin/settings-page.php';
 }
 
-register_activation_hook( __FILE__, 'course_certificate_segwitz_certificate_onActivation' );
-register_deactivation_hook( __FILE__, 'course_certificate_segwitz_certificate_onDeactivation' );
+register_activation_hook( __FILE__, 'course_certificate_certify_certificate_onActivation' );
+register_deactivation_hook( __FILE__, 'course_certificate_certify_certificate_onDeactivation' );
 
 // Search certificate
 function course_certificate_certificate_search_form(){ 
@@ -172,33 +170,29 @@ function course_certificate_certificate_search_form(){
 	if( isset($_POST['code_data']) ){
 		$code = sanitize_text_field($_POST['certificate_code']);
 		global $wpdb;
-		$rows = $wpdb->get_results( "SELECT * FROM segwitz_course_certificates where certificate_code = '$code'"); 
+		$rows = $wpdb->get_results( "SELECT * FROM certify_course_certificates where certificate_code = '$code'"); 
 		if( !empty($rows) ){
-		$output .= '<h1 class="rs-heading">Search Result</h1>
-		</strong>
-	</div>
-        <table class="search-table" style="width:100%">
-        	<thead>
-                <tr>
-                    <th class="btlr-10">Candidate Name</th>
-                    <th>Course</th>
-                    <th>Hours Completed</th>
-                    <th>Certification No</th>
-                    <th>Date of Completion</th>
-                </tr>
-            </thead>
-            <tbody>';
-			foreach ( $rows as $data ){
-            	$output .= '<tr>
-            		<td class="bl-1">'.$data->student_name.'</td>
-            		<td>'.$data->course_name.'</td>
-            		<td>'.$data->course_hours.'</td>
-            		<td>'.$data->certificate_code.'</td>
-            		<td>'.date("d/M/Y", strtotime($data->dob)).'</td>
-            	</tr>';
-            }
-           	$output .= ' </tbody>
-        </table>';
+    foreach ( $rows as $data ){
+        $output .= '<h1 class="rs-heading">Search Result</h1></div>';
+        $output .= '<table class="search-table" style="width:100%">'
+            .'<tbody>'
+            .'<tr>'
+                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Candidate Name</th>'
+                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Course</th>'
+                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Hours Completed</th>'
+                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Certification No</th>'
+                .'<th style="text-align:left; background-color:#000; color:#fff; padding:15px 10px;">Date of Completion</th>'
+            .'</tr>'
+            .'<tr>'
+                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->student_name.'</td>'
+                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->course_name.'</td>'
+                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->course_hours.'</td>'
+                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.$data->certificate_code.'</td>'
+                .'<td style="text-align:left; padding:14px 10px; border-right:1px solid #ddd;">'.date("d/M/Y", strtotime($data->dob)).'</td>'
+            .'</tr>'
+            .'</tbody>'
+            .'</table>';
+    }
    		}else{
    			echo '<div class="danger">No result found against this code <strong>'.$code.'</strong></div>';
    		} 

@@ -5,11 +5,11 @@ if (! defined( 'ABSPATH' )) {
 }
 
 
-function course_certificate_segwitz_certificate_onActivation(){
+function course_certificate_certify_certificate_onActivation(){
 	global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
     $create_table_query = "
-    CREATE TABLE IF NOT EXISTS `segwitz_course_certificates` (
+    CREATE TABLE IF NOT EXISTS `certify_course_certificates` (
         id INTEGER NOT NULL AUTO_INCREMENT,
         certificate_code TEXT NOT NULL,
         student_name TEXT NOT NULL,
