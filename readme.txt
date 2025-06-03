@@ -1,42 +1,102 @@
-=== Certify ===
-Contributors: amritkumarchanchal, SegWitz
-Tags: certificate, verification, education, course, management
+=== Certify – Certificate Management & Verification ===
+Contributors: wordpressdotorg
+Tags: certificate, verification, management, course, education, training
 Requires at least: 4.0
 Tested up to: 6.8
-Requires PHP: 5.4
-Stable tag: 1.0
+Requires PHP: 7.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Certify is a modern, user-friendly WordPress plugin for managing and verifying course certificates online.
+A comprehensive certificate management and verification system for WordPress. Create, manage, and verify certificates with ease.
 
 == Description ==
-Certify allows educational institutions, training centers, and organizations to manage and verify certificates online. Admins can add, edit, and bulk upload certificates, while users can verify their credentials using a unique certificate code. The plugin features a clean, responsive interface and robust security.
 
-== Features ==
-* Add, edit, and delete certificates from the admin panel
+Certify is a powerful WordPress plugin that helps you manage and verify certificates for your courses, training programs, or educational institutions. With an intuitive interface and robust features, it makes certificate management simple and efficient.
+
+= Key Features =
+
+* Create and manage certificates with unique codes
 * Bulk upload certificates via CSV
-* Frontend certificate verification form (shortcode: [get_certificate_search_form])
-* Professional, mobile-friendly UI/UX
-* Secure data handling and validation
-* Customizable result display with verified tick marks
+* Frontend certificate verification system
+* Responsive design for all devices
+* Secure and user-friendly interface
+* Multilingual support
+* Customizable certificate details
+* Export certificate data
+
+= Use Cases =
+
+* Educational institutions
+* Online course providers
+* Training organizations
+* Professional certification programs
+* Corporate training departments
+* Workshop and seminar organizers
+
+= How It Works =
+
+1. Install and activate the plugin
+2. Add certificates through the admin panel
+3. Use the shortcode `[get_certificate_search_form]` to display the verification form
+4. Users can verify certificates by entering the certificate code
 
 == Installation ==
-1. Upload the plugin files to the `/wp-content/plugins/` directory, or install the plugin through the WordPress plugins screen directly.
-2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Use the Certify menu in the dashboard to manage certificates.
-4. Add the verification form to any page or post using the `[get_certificate_search_form]` shortcode.
+
+1. Upload the `certify-certificate-management-verification` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to 'Certificates' in the admin menu to start managing certificates
+4. Use the shortcode `[get_certificate_search_form]` to display the verification form on any page
+
+== Frequently Asked Questions ==
+
+= How do I add certificates? =
+
+You can add certificates in two ways:
+1. Manually through the admin panel
+2. Bulk upload using a CSV file
+
+= What format should the CSV file be in? =
+
+The CSV file should have the following columns:
+* certificate_code
+* student_name
+* course_name
+* course_hours
+* dob (date of completion in YYYY-MM-DD format)
+
+= Can I customize the certificate verification form? =
+
+Yes, you can customize the form's appearance using CSS. The form uses Bootstrap classes for styling.
+
+= Is the plugin translation-ready? =
+
+Yes, the plugin is fully translation-ready. You can translate it using standard WordPress translation tools.
+
+== Screenshots ==
+
+1. Certificate management dashboard
+2. Add/Edit certificate form
+3. Bulk upload interface
+4. Certificate verification form
+5. Search results display
 
 == Changelog ==
-= 1.0 =
+
+= 1.0.0 =
 * Initial release
-* Major update and rebranding to Certify
-* Improved UI/UX for admin and frontend users
-* Enhanced bulk upload functionality
 
-== License ==
-This plugin is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
+== Upgrade Notice ==
 
-This plugin is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+= 1.0.0 =
+Initial release of Certify – Certificate Management & Verification.
 
-You should have received a copy of the GNU General Public License along with this plugin. If not, see <https://www.gnu.org/licenses/>.
+== Privacy Policy ==
+
+Certify – Certificate Management & Verification does not collect any personal data. All certificate data is stored in your WordPress database and is not shared with any third parties.
+
+== Credits ==
+
+* Bootstrap - https://getbootstrap.com/
+* jQuery UI - https://jqueryui.com/
+* Material Icons - https://fonts.google.com/icons

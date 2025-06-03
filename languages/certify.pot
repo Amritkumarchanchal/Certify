@@ -1,0 +1,225 @@
+# Copyright (C) 2024 WordPress.org
+# This file is distributed under the same license as the Certify – Certificate Management & Verification plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Certify – Certificate Management & Verification 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/certify-certificate-management-verification\n"
+"POT-Creation-Date: 2024-03-14T12:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2024-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: certificate-verification.php:123
+msgid "Security check failed. Please try again."
+msgstr ""
+
+#: certificate-verification.php:127
+msgid "Please enter a certificate code."
+msgstr ""
+
+#: certificate-verification.php:147
+msgid "Certificate Details"
+msgstr ""
+
+#: certificate-verification.php:149
+msgid "Certificate No"
+msgstr ""
+
+#: certificate-verification.php:153
+msgid "Candidate Name"
+msgstr ""
+
+#: certificate-verification.php:157
+msgid "Course"
+msgstr ""
+
+#: certificate-verification.php:161
+msgid "Hours Completed"
+msgstr ""
+
+#: certificate-verification.php:165
+msgid "Date of Completion"
+msgstr ""
+
+#: certificate-verification.php:171
+msgid "Certificate not found. Please verify the certificate code."
+msgstr ""
+
+#: certificate-verification.php:181
+msgid "Enter Certificate Code"
+msgstr ""
+
+#: certificate-verification.php:186
+msgid "Verify Certificate"
+msgstr ""
+
+#: certificate-verification.php:200
+msgid "Certificate Management"
+msgstr ""
+
+#: certificate-verification.php:201
+msgid "Certificates"
+msgstr ""
+
+#: certificate-verification.php:220
+msgid "Please select at least one record to delete."
+msgstr ""
+
+#: certificate-verification.php:221
+msgid "Are you sure you want to delete the selected records?"
+msgstr ""
+
+#: certificate-verification.php:222
+msgid "Please upload a valid CSV file."
+msgstr ""
+
+#: certificate-verification.php:223
+msgid "File size must be less than 2MB."
+msgstr ""
+
+#: admin/templates/admin-settings.php:12
+msgid "Manage Certificates"
+msgstr ""
+
+#: admin/templates/admin-settings.php:17
+msgid "Shortcode:"
+msgstr ""
+
+#: admin/templates/admin-settings.php:18
+msgid "Copy and paste this shortcode on the page where you want the certificate search form to appear."
+msgstr ""
+
+#: admin/templates/admin-settings.php:28
+msgid "Add New Certificate"
+msgstr ""
+
+#: admin/templates/admin-settings.php:32
+msgid "Delete"
+msgstr ""
+
+#: admin/templates/admin-settings.php:36
+msgid "Bulk Upload"
+msgstr ""
+
+#: admin/templates/admin-settings.php:45
+msgid "Candidate Name"
+msgstr ""
+
+#: admin/templates/admin-settings.php:46
+msgid "Course"
+msgstr ""
+
+#: admin/templates/admin-settings.php:47
+msgid "Hours Completed"
+msgstr ""
+
+#: admin/templates/admin-settings.php:48
+msgid "Certificate No"
+msgstr ""
+
+#: admin/templates/admin-settings.php:49
+msgid "Date of Completion"
+msgstr ""
+
+#: admin/templates/admin-settings.php:50
+msgid "Actions"
+msgstr ""
+
+#: admin/templates/admin-settings.php:82
+msgid "No certificates found."
+msgstr ""
+
+#: admin/templates/admin-settings.php:92
+msgid "Showing %1$d to %2$d of %3$d entries"
+msgstr ""
+
+#: admin/templates/admin-settings.php:120
+msgid "Add Certificate"
+msgstr ""
+
+#: admin/templates/admin-settings.php:124
+msgid "Course Name"
+msgstr ""
+
+#: admin/templates/admin-settings.php:128
+msgid "Hours Completed"
+msgstr ""
+
+#: admin/templates/admin-settings.php:132
+msgid "Certificate No"
+msgstr ""
+
+#: admin/templates/admin-settings.php:136
+msgid "Date of Completion"
+msgstr ""
+
+#: admin/templates/admin-settings.php:142
+msgid "Cancel"
+msgstr ""
+
+#: admin/templates/admin-settings.php:143
+msgid "Add"
+msgstr ""
+
+#: admin/templates/admin-settings.php:151
+msgid "Edit Certificate"
+msgstr ""
+
+#: admin/templates/admin-settings.php:155
+msgid "Candidate Name"
+msgstr ""
+
+#: admin/templates/admin-settings.php:159
+msgid "Course Name"
+msgstr ""
+
+#: admin/templates/admin-settings.php:163
+msgid "Hours Completed"
+msgstr ""
+
+#: admin/templates/admin-settings.php:167
+msgid "Certificate No"
+msgstr ""
+
+#: admin/templates/admin-settings.php:171
+msgid "Date of Completion"
+msgstr ""
+
+#: admin/templates/admin-settings.php:177
+msgid "Update"
+msgstr ""
+
+#: admin/templates/admin-settings.php:185
+msgid "Delete Certificate"
+msgstr ""
+
+#: admin/templates/admin-settings.php:189
+msgid "Are you sure you want to delete these records?"
+msgstr ""
+
+#: admin/templates/admin-settings.php:190
+msgid "This action cannot be undone."
+msgstr ""
+
+#: admin/templates/admin-settings.php:196
+msgid "Delete"
+msgstr ""
+
+#: admin/templates/admin-settings.php:204
+msgid "Bulk Upload Certificates"
+msgstr ""
+
+#: admin/templates/admin-settings.php:208
+msgid "Upload CSV File"
+msgstr ""
+
+#: admin/templates/admin-settings.php:210
+msgid "CSV columns: certificate_code, student_name, course_name, course_hours, dob"
+msgstr ""
+
+#: admin/templates/admin-settings.php:216
+msgid "Upload"
+msgstr "" 
