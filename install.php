@@ -25,13 +25,8 @@ function certify_certificate_certify_certificate_onActivation(){
         course_hours TEXT NOT NULL,
         dob TEXT NOT NULL,
         PRIMARY KEY (id)
-    ) $charset_collate;";
-    
-    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    ) $charset_collate;";    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $create_table_query );
-    
-    // Log table creation for debugging
-    error_log('Certify Plugin: Table creation attempted for ' . $table_name);
 }
 
 /**
@@ -41,13 +36,10 @@ function certify_certificate_certify_certificate_onActivation(){
 function certify_certificate_ensure_table_exists() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'certify_certificate_management';
-    
-    // Check if table exists
-    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'");
-    
-    if ($table_exists != $table_name) {
+      // Check if table exists
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for table existence check during installation
+    $table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) );    if ($table_exists != $table_name) {
         // Table doesn't exist, create it
         certify_certificate_certify_certificate_onActivation();
-        error_log('Certify Plugin: Table was missing and has been created');
     }
 }

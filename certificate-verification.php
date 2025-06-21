@@ -9,16 +9,12 @@
  * Description: Admin can enter course certificate codes, and details in the panel and user can verify their certificate using the course code in the front end.
  * Version: 1.0
  * Author: Amrit Kumar Chanchal
- * Author URI: https://www.linkedin.com/in/amritkumarchanchal/
+ * Author URI: https://www.linkedin.com/in/amritkumarchanchal/ 
  * Requires at least: 5.0
- * Tested up to: 6.6
+ * Tested up to: 6.8
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: certify
- * Domain Path: /languages
- * Network: false
- * Update URI: false
  */
 
 if (! defined( 'ABSPATH' )) {
@@ -39,19 +35,19 @@ if (!defined('CERTIFY_PLUGIN_PATH')) {
  * Load admin assets (CSS, JS) for the certificate management interface
  * This function handles all the styling and interactive features in the admin panel
  */
-function certify_certificate_admin_assets() {
-    wp_enqueue_script('jquery');
-    // Load jQuery UI for date picker functionality
-    wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
-    wp_enqueue_script('jquery-ui-js', 'https://code.jquery.com/ui/1.13.2/jquery-ui.min.js', array('jquery'), null, true);
-    // Load Bootstrap 5 for modern UI components and styling
-    wp_enqueue_script('certify-admin-bs', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
-    wp_enqueue_style('certify-admin-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
-    // DataTables for sortable, searchable certificate tables
-    wp_enqueue_style('dataTable-css', 'https://cdn.datatables.net/1.13.10/css/dataTables.bootstrap5.min.css');
-    wp_enqueue_script('dataTable-js', 'https://cdn.datatables.net/1.13.10/js/dataTables.bootstrap5.min.js', array('jquery'), null, true);
-    // Material Icons for consistent iconography
-    wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', array(), null);
+function certify_certificate_admin_assets() {    wp_enqueue_script('jquery');
+    // Load WordPress core jQuery UI for date picker functionality
+    wp_enqueue_script('jquery-ui-datepicker');
+    wp_enqueue_style('wp-jquery-ui-dialog');    // Load Bootstrap 5 for modern UI components and styling
+    wp_enqueue_script('certify-admin-bs', plugin_dir_url(__FILE__) . 'assets/js/bootstrap.bundle.min.js', array('jquery'), CERTIFY_PLUGIN_VERSION, true);
+    wp_enqueue_style('certify-admin-css', plugin_dir_url(__FILE__) . 'assets/css/bootstrap.min.css', array(), CERTIFY_PLUGIN_VERSION);    // Load custom CSS for both frontend and admin styles (includes datepicker)
+    wp_enqueue_style('certify-frontend', plugin_dir_url(__FILE__) . 'assets/css/certify-frontend.css', array(), CERTIFY_PLUGIN_VERSION);    // DataTables for sortable, searchable certificate tables
+    wp_enqueue_style('dataTable-css', plugin_dir_url(__FILE__) . 'assets/css/dataTables.bootstrap5.min.css', array(), CERTIFY_PLUGIN_VERSION);
+    wp_enqueue_script('dataTable-core-js', plugin_dir_url(__FILE__) . 'assets/js/jquery.dataTables.min.js', array('jquery'), CERTIFY_PLUGIN_VERSION, true);
+    wp_enqueue_script('dataTable-js', plugin_dir_url(__FILE__) . 'assets/js/dataTables.bootstrap5.min.js', array('jquery', 'dataTable-core-js'), CERTIFY_PLUGIN_VERSION, true);    // Material Icons for consistent iconography
+    wp_enqueue_style('material-icons', plugin_dir_url(__FILE__) . 'assets/css/material-icons.css', array(), CERTIFY_PLUGIN_VERSION);
+    // Load custom admin JavaScript
+    wp_enqueue_script('certify-admin-js', plugin_dir_url(__FILE__) . 'assets/js/certify-admin.js', array('jquery', 'jquery-ui-datepicker', 'dataTable-js'), CERTIFY_PLUGIN_VERSION, true);
     
     // Custom admin styling - makes the interface look professional and user-friendly
     $admin_css = "
@@ -86,109 +82,10 @@ function certify_certificate_admin_assets() {
         .modal .modal-dialog { max-width: 400px; }        .modal .modal-header, .modal .modal-body, .modal .modal-footer { padding: 20px 30px; }
         .modal .modal-content { border-radius: 3px; }
         .modal .modal-footer { background: #ecf0f1; border-radius: 0 0 3px 3px; }
-        .modal .form-control { border-radius: 2px; box-shadow: none; border-color: #dddddd; }        .modal .btn { border-radius: 2px; min-width: 100px; }
-        @media (max-width: 768px) {
+        .modal .form-control { border-radius: 2px; box-shadow: none; border-color: #dddddd; }        .modal .btn { border-radius: 2px; min-width: 100px; }        @media (max-width: 768px) {
             .table-title .col-sm-6:last-child { text-align: center; margin-top: 15px; }
             .table-title .btn { margin: 5px; }
-        }
-    ";    wp_add_inline_style('certify-admin-css', $admin_css);
-    
-    // JavaScript for interactive features like modals, date pickers, and table management
-    $admin_js = "
-        jQuery(document).ready(function($) {
-            // Initialize DataTable
-            if ($('#certificates-table').length) {
-                $('#certificates-table').DataTable();
-            }
-              // Initialize datepickers
-            if ($('#doc').length) {
-                $('#doc').datepicker({
-                    dateFormat: 'dd/M/yy',
-                    changeMonth: true,
-                    changeYear: true,
-                    yearRange: '1940:' + new Date().getFullYear(),
-                    altField: '#adoc',
-                    altFormat: 'mm/dd/yy'
-                });
-            }
-            
-            if ($('#editdoc').length) {
-                $('#editdoc').datepicker({
-                    dateFormat: 'dd/M/yy',
-                    changeMonth: true,
-                    changeYear: true,
-                    yearRange: '1940:' + new Date().getFullYear(),
-                    altField: '#eeditdoc',
-                    altFormat: 'mm/dd/yy'
-                });
-            }
-            
-            // Edit modal handler
-            $(document).on('click', '.editModal', function() {
-                var id = $(this).data('id');
-                var sname = $('.sname', $(this).closest('tr')).html();
-                var cname = $('.cname', $(this).closest('tr')).html();
-                var ccode = $('.ccode', $(this).closest('tr')).html();
-                var chour = $('.chour', $(this).closest('tr')).html();
-                var cadt = $('.cadt', $(this).closest('tr')).html();
-                var ocadt = $('.cadt', $(this).closest('tr')).attr('date');
-                
-                $('#editEmployeeModal input[name=editid]').val(id);
-                $('#editEmployeeModal input[name=std_name]').val(sname);
-                $('#editEmployeeModal input[name=course_name]').val(cname);                $('#editEmployeeModal input[name=course_hours]').val(chour);
-                $('#editEmployeeModal input[name=certificate_code]').val(ccode);
-                $('#editEmployeeModal input[name=doc]').val(ocadt);
-                $('#editEmployeeModal #editdoc').val(cadt);
-                
-                var editModal = new bootstrap.Modal(document.getElementById('editEmployeeModal'));
-                editModal.show();
-            });
-            
-            // Delete modal handler
-            $(document).on('click', '.deleteModal', function() {
-                var id = $(this).data('id');
-                $('#deleteEmployeeModal input[name=editid]').val(id);
-                var deleteModal = new bootstrap.Modal(document.getElementById('deleteEmployeeModal'));
-                deleteModal.show();
-            });
-            
-            // Delete multiple handler
-            $(document).on('click', '.deleteMultiple', function() {
-                var allIds = [];
-                $('.checkedcert:checkbox:checked').each(function() {
-                    allIds.push($(this).val());
-                });
-                $('#deleteEmployeeModal input[name=editid]').val(allIds.join(','));
-                var deleteModal = new bootstrap.Modal(document.getElementById('deleteEmployeeModal'));
-                deleteModal.show();
-            });
-            
-            // Select all checkbox handler
-            var checkbox = $('table tbody input[type=\"checkbox\"]');
-            $('#selectAll').click(function() {
-                if (this.checked) {
-                    checkbox.each(function() {
-                        this.checked = true;
-                    });
-                } else {
-                    checkbox.each(function() {
-                        this.checked = false;
-                    });
-                }
-            });
-            
-            checkbox.click(function() {
-                if (!this.checked) {
-                    $('#selectAll').prop('checked', false);
-                }
-            });
-            
-            // Auto-hide alerts
-            setTimeout(function() {
-                $('.hide-alert').remove();
-            }, 5000);
-        });
-    ";    wp_add_inline_script('certify-admin-bs', $admin_js);
+        }    ";    wp_add_inline_style('certify-admin-css', $admin_css);
 }
 // Hook the admin assets function to load only in admin area
 add_action('admin_enqueue_scripts', 'certify_certificate_admin_assets');
@@ -196,7 +93,7 @@ add_action('admin_enqueue_scripts', 'certify_certificate_admin_assets');
 
 // Load frontend styles for the certificate search form
 add_action('wp_enqueue_scripts', function() {
-    wp_enqueue_style('certify-frontend', plugin_dir_url(__FILE__).'assets/css/certify-frontend.css');
+    wp_enqueue_style('certify-frontend', plugin_dir_url(__FILE__).'assets/css/certify-frontend.css', array(), CERTIFY_PLUGIN_VERSION);
 });
 
 /**
@@ -212,15 +109,27 @@ function certify_certificate_search_form(){
 		</form>
 	</div>
 	<div class="container">';	if( isset($_POST['code_data']) && isset($_POST['search_nonce']) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['search_nonce'] ) ), 'search_certificate' ) ){
-		$code = sanitize_text_field($_POST['certificate_code']);
+		// Validate that certificate_code exists in POST data
+		if ( ! isset($_POST['certificate_code']) ) {
+			$output .= '<div class="danger">Certificate code is required.</div>';
+		} else {
+			$code = sanitize_text_field( wp_unslash( $_POST['certificate_code'] ) );
 		
 		// Validate certificate code format (basic validation)
 		if (empty($code) || strlen($code) > 50) {
 			$output .= '<div class="danger">Invalid certificate code format.</div>';		} else {
-			global $wpdb;
-			// Use prepared statement to prevent SQL injection attacks
-			$table_name = $wpdb->prefix . 'certify_certificate_management';
-			$rows = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$table_name} WHERE certificate_code = %s", $code) );
+			// Try to get certificate from cache first
+			$cache_key = 'certify_certificate_' . md5($code);
+			$rows = wp_cache_get($cache_key, 'certify_plugin');
+					if (false === $rows) {
+				global $wpdb;				// Use prepared statement to prevent SQL injection attacks
+				$table_name = $wpdb->prefix . 'certify_certificate_management';
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name cannot be parameterized, custom table requires direct query
+				$rows = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$table_name} WHERE certificate_code = %s", $code) );
+				
+				// Cache the result for 10 minutes (600 seconds)
+				wp_cache_set($cache_key, $rows, 'certify_plugin', 600);
+			}
 					if( !empty($rows) ){
 				// Certificate found - display the results with verification checkmark
 				foreach ( $rows as $data ){
@@ -231,12 +140,13 @@ function certify_certificate_search_form(){
 						<div class="cf-row"><div class="cf-label">Course</div><div class="cf-value">'.esc_html($data->course_name).'</div></div>
 						<div class="cf-row"><div class="cf-label">Hours Completed</div><div class="cf-value">'.esc_html($data->course_hours).'</div></div>
 						<div class="cf-row"><div class="cf-label">Certification No</div><div class="cf-value">'.esc_html($data->certificate_code).'</div></div>
-						<div class="cf-row"><div class="cf-label">Date of Completion</div><div class="cf-value">'.esc_html(date("d/M/Y", strtotime($data->dob))).'</div></div>					</div>';
-				}
-			} else {
+						<div class="cf-row"><div class="cf-label">Date of Completion</div><div class="cf-value date-field">'.esc_html(gmdate("d/M/Y", strtotime($data->dob))).'</div></div>					</div>';
+				}			} else {
 				$output .= '<div class="danger">No result found against this code <strong>'.esc_html($code).'</strong></div>';
 			}
-		}	}
+		}
+		}
+	}
 	$output .= '</div>';
 	return $output;
 }

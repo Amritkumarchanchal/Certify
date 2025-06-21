@@ -18,31 +18,32 @@ function certify_certificate_admin_certificate_ui() {
 	if( isset($_POST['add_certificate']) ) {
 		// Verify nonce for security - prevents CSRF attacks
 		if( ! isset( $_POST['course_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['course_nonce'] ) ), 'admin_certificate_ui' ) ) {
-			echo wp_kses_post('<div class="alert alert-danger">Try Again Verification Failed!!</div>');
-		} else if( isset($_POST['add_certificate']) && $_POST['add_certificate'] == "Delete" ) {
+			echo wp_kses_post('<div class="alert alert-danger">Try Again Verification Failed!!</div>');		} else if( isset($_POST['add_certificate']) && $_POST['add_certificate'] == "Delete" ) {
 			// Handle certificate deletion (single or multiple)
-			$editid = sanitize_text_field($_POST['editid']);
-			if (strpos($editid, ',') !== false) {
+			if ( ! isset($_POST['editid']) ) {
+				$error = '<div class="alert alert-danger hide-alert">No certificate ID provided for deletion!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+			} else {
+				$editid = sanitize_text_field( wp_unslash( $_POST['editid'] ) );
+				if (strpos($editid, ',') !== false) {
 				$editid = explode(",", $editid);
 				foreach( $editid as $edt ) {
 					$result = certify_certificate_delete_course_certificate( $edt );
+				}				} else {
+					$result = certify_certificate_delete_course_certificate($editid);
 				}
-			} else {
-				$result = certify_certificate_delete_course_certificate($editid);
-			}
-			if( $result == 1 ) {
-                $error = '<div class="alert alert-success hide-alert">Certificate deleted successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-            } else {
-                $error = '<div class="alert alert-danger hide-alert">Error while deleting!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-            }		} else if( empty($_POST['certificate_code']) || empty($_POST['std_name']) || empty($_POST['course_name']) || empty($_POST['course_hours']) || empty($_POST['doc']) ) {
-			$error = '<div class="alert alert-danger hide-alert">All fields are required!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-		} else {
-			$code = sanitize_text_field($_POST['certificate_code']);
-			$name = sanitize_text_field($_POST['std_name']);
-			$course = sanitize_text_field($_POST['course_name']);
-			$hours = sanitize_text_field($_POST['course_hours']);
-			$doc = sanitize_text_field($_POST['doc']);
-			$editid = isset($_POST['editid']) ? sanitize_text_field($_POST['editid']) : '';
+				if( $result == 1 ) {
+	                $error = '<div class="alert alert-success hide-alert">Certificate deleted successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+	            } else {
+	                $error = '<div class="alert alert-danger hide-alert">Error while deleting!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+	            }
+			}} else if( empty($_POST['certificate_code']) || empty($_POST['std_name']) || empty($_POST['course_name']) || empty($_POST['course_hours']) || empty($_POST['doc']) ) {
+			$error = '<div class="alert alert-danger hide-alert">All fields are required!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';		} else {
+			$code = sanitize_text_field( wp_unslash( $_POST['certificate_code'] ) );
+			$name = sanitize_text_field( wp_unslash( $_POST['std_name'] ) );
+			$course = sanitize_text_field( wp_unslash( $_POST['course_name'] ) );
+			$hours = sanitize_text_field( wp_unslash( $_POST['course_hours'] ) );
+			$doc = sanitize_text_field( wp_unslash( $_POST['doc'] ) );
+			$editid = isset($_POST['editid']) ? sanitize_text_field( wp_unslash( $_POST['editid'] ) ) : '';
 			$result = certify_certificate_add_course_certificate($code, $name, $course, $hours, $doc, $editid);
 			if( $result == 1 ) {
 				if( $editid != "" ) {
@@ -55,18 +56,33 @@ function certify_certificate_admin_certificate_ui() {
             }
 		}	} else if( isset($_POST['bulk_upload']) && isset($_FILES['bulk_certificate_csv']) && !empty($_FILES['bulk_certificate_csv']['tmp_name']) ) {
         if( ! isset( $_POST['course_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['course_nonce'] ) ), 'admin_certificate_ui' ) ) {
-            echo wp_kses_post('<div class="alert alert-danger">Bulk Upload: Verification Failed!</div>');} else {
-            $csvFile = $_FILES['bulk_certificate_csv']['tmp_name'];
-            $handle = fopen($csvFile, 'r');
-            if ($handle !== false) {
+            echo wp_kses_post('<div class="alert alert-danger">Bulk Upload: Verification Failed!</div>');        } else {
+            // Sanitize the uploaded file path
+            $csvFile = sanitize_text_field( $_FILES['bulk_certificate_csv']['tmp_name'] );
+            
+            // Initialize WordPress filesystem
+            global $wp_filesystem;
+            if (empty($wp_filesystem)) {
+                require_once ABSPATH . '/wp-admin/includes/file.php';
+                WP_Filesystem();
+            }
+            
+            // Read CSV file using WP_Filesystem
+            $csv_content = $wp_filesystem->get_contents($csvFile);
+            if ($csv_content !== false) {
+                $lines = explode("\n", $csv_content);
                 $row = 0;
                 $uploaded_count = 0;
-                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                
+                foreach ($lines as $line) {
+                    if (empty(trim($line))) continue;
+                    $data = str_getcsv($line);
+                    
                     // Skip header row if present
                     if ($row == 0 && (strtolower($data[0]) == 'certificate_code' || strtolower($data[0]) == 'student_name')) { 
                         $row++; 
                         continue; 
-                    }                    // Ensure we have at least 5 columns: certificate_code, student_name, course_name, course_hours, date_of_completion
+                    }// Ensure we have at least 5 columns: certificate_code, student_name, course_name, course_hours, date_of_completion
                     if (count($data) < 5) continue;
                       $code = sanitize_text_field($data[0]);
                     $name = sanitize_text_field($data[1]);
@@ -75,22 +91,18 @@ function certify_certificate_admin_certificate_ui() {
                     $doc = sanitize_text_field($data[4]);
                       if (!empty($code) && !empty($name) && !empty($course) && !empty($hours)) {
                         certify_certificate_add_course_certificate($code, $name, $course, $hours, $doc, '');
-                        $uploaded_count++;
-                    }
+                        $uploaded_count++;                    }
                     $row++;
                 }
-                fclose($handle);
                 $error = '<div class="alert alert-success hide-alert">Bulk upload completed! ' . esc_html($uploaded_count) . ' certificates uploaded successfully.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
             } else {
                 $error = '<div class="alert alert-danger hide-alert">Bulk upload failed to read file!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
             }
-        }
-    }	global $wpdb;
-    $table_name = $wpdb->prefix . 'certify_certificate_management';
-    $certificates = $wpdb->get_results( "SELECT * FROM {$table_name}");
-    // Safely get 'pg' from $_GET with nonce verification for admin pagination
+        }    }
+		// Get certificates using helper function
+	$certificates = certify_certificate_get_all_certificates();    // Safely get 'pg' from $_GET with nonce verification for admin pagination
     $cpage = 1;
-    if (isset($_GET['pg']) && is_numeric($_GET['pg']) && isset($_GET['pg_nonce']) && wp_verify_nonce($_GET['pg_nonce'], 'pagination_nonce')) {
+    if (isset($_GET['pg']) && is_numeric($_GET['pg']) && isset($_GET['pg_nonce']) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['pg_nonce'] ) ), 'pagination_nonce')) {
         $cpage = intval($_GET['pg']);
     } elseif (isset($_GET['pg']) && is_numeric($_GET['pg']) && !isset($_GET['pg_nonce'])) {
         // Allow first page load without nonce for initial access
@@ -118,7 +130,7 @@ function certify_certificate_admin_certificate_ui() {
 		<div class="alert alert-info" role="alert">
 		  	<strong>[certify]</strong> Copy and paste the shortcode on the page you want the search bar and result of the certificates to be.
 		</div>
-	    <table class="table table-striped table-hover">
+	    <table id="certificates-table" class="table table-striped table-hover">
 	      <thead>
 	        <tr>
 	          <th>
@@ -146,7 +158,7 @@ function certify_certificate_admin_certificate_ui() {
 	                <td class="cname"><?php echo esc_html($value->course_name); ?></td>
 	                <td class="chour"><?php echo esc_html($value->course_hours); ?></td>
 	                <td class="ccode"><?php echo esc_html($value->certificate_code); ?></td>
-	                <td class="cadt" date="<?php echo esc_attr($value->dob); ?>"><?php echo esc_html(date("d/M/Y", strtotime($value->dob))); ?></td>			        <td>
+	                <td class="cadt" date="<?php echo esc_attr($value->dob); ?>"><?php echo esc_html(gmdate("d/M/Y", strtotime($value->dob))); ?></td>			        <td>
 			        	<div class="actions">
 			           		<a href="javascript:void();" class="edit editModal" data-id="<?php echo esc_attr($value->id);?>"><i class="material-icons" data-bs-toggle="tooltip" title="Edit">&#xE254;</i></a>
 			           		<a href="javascript:void(0);" class="delete deleteModal" data-id="<?php echo esc_attr($value->id);?>"><i class="material-icons" data-bs-toggle="tooltip" title="Delete">&#xE872;</i></a>
@@ -198,7 +210,7 @@ function certify_certificate_admin_certificate_ui() {
 				<input type="text" required class="form-control" name="course_hours">
 	          </div>	          <div class="form-group">
 				<label>Certification No</label>
-				<input type="text" required class="form-control" value="<?php echo esc_attr(substr(md5(rand()), 0, 7)); ?>" name="certificate_code">
+				<input type="text" required class="form-control" value="<?php echo esc_attr(substr(md5(wp_rand()), 0, 7)); ?>" name="certificate_code">
 	          </div>			  <div class="form-group">
 				<label>Date of Completion</label>
 				<input type="text" id="doc" required class="form-control" readonly="readonly">
@@ -237,7 +249,7 @@ function certify_certificate_admin_certificate_ui() {
 				<input type="text" required class="form-control" name="course_hours">
 	          </div>	          <div class="form-group">
 				<label>Certification No</label>
-				<input type="text" required class="form-control" value="<?php echo esc_attr(substr(md5(rand()), 0, 7)); ?>" name="certificate_code">
+				<input type="text" required class="form-control" value="<?php echo esc_attr(substr(md5(wp_rand()), 0, 7)); ?>" name="certificate_code">
 	          </div>			  <div class="form-group">
 				<label>Date of Completion</label>
 				<input type="text" id="editdoc" required class="form-control" readonly="readonly">

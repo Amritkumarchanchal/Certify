@@ -29,11 +29,20 @@ function certify_certificate_drop_certificate_table(){
 	if ( ! current_user_can( 'activate_plugins' ) ) return;
 	
 	if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) exit ();
+	
 	// Remove the plugin's database table and any stored options
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'certify_certificate_management';
-	$sql = "DROP TABLE IF EXISTS {$table_name}";
-	$wpdb->query($sql);
+		// Sanitize table name and execute DROP TABLE - table names cannot be parameterized
+	$table_name = esc_sql($table_name);
+	
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Intentional direct query for uninstall cleanup, table name cannot be parameterized
+	$result = $wpdb->query("DROP TABLE IF EXISTS `{$table_name}`");
+	
 	// Clean up any plugin options if needed
-	// delete_option('certify_plugin_options');
+	delete_option('certify_plugin_options');
+	delete_option('certify_db_version');
+	
+	// Clear any cached data
+	wp_cache_flush();
 }
