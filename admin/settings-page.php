@@ -1,25 +1,34 @@
 <?php
-//Exit if file called directly
+// Prevent direct access to this file for security
 if (! defined( 'ABSPATH' )) {
 	exit;
 }
 
-// display the plugin settings page
-function course_certificate_admin_certificate_ui() {
+/**
+ * Main admin interface for certificate management
+ * This function creates the complete admin page with tables, forms, and modals
+ */
+function certify_certificate_admin_certificate_ui() {
 
+	// Security check - only administrators can access this page
 	if ( ! current_user_can( 'manage_options' ) ) return;
-	$error = "";	if( isset($_POST['add_certificate']) ) {
+	$error = "";
+	
+	// Handle form submissions (add, edit, delete certificates)
+	if( isset($_POST['add_certificate']) ) {
+		// Verify nonce for security - prevents CSRF attacks
 		if( ! isset( $_POST['course_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['course_nonce'] ) ), 'admin_certificate_ui' ) ) {
 			echo wp_kses_post('<div class="alert alert-danger">Try Again Verification Failed!!</div>');
 		} else if( isset($_POST['add_certificate']) && $_POST['add_certificate'] == "Delete" ) {
+			// Handle certificate deletion (single or multiple)
 			$editid = sanitize_text_field($_POST['editid']);
 			if (strpos($editid, ',') !== false) {
 				$editid = explode(",", $editid);
 				foreach( $editid as $edt ) {
-					$result = course_certificate_delete_course_certificate( $edt );
+					$result = certify_certificate_delete_course_certificate( $edt );
 				}
 			} else {
-				$result = course_certificate_delete_course_certificate($editid);
+				$result = certify_certificate_delete_course_certificate($editid);
 			}
 			if( $result == 1 ) {
                 $error = '<div class="alert alert-success hide-alert">Certificate deleted successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
@@ -34,7 +43,7 @@ function course_certificate_admin_certificate_ui() {
 			$hours = sanitize_text_field($_POST['course_hours']);
 			$doc = sanitize_text_field($_POST['doc']);
 			$editid = isset($_POST['editid']) ? sanitize_text_field($_POST['editid']) : '';
-			$result = course_certificate_add_course_certificate($code, $name, $course, $hours, $doc, $editid);
+			$result = certify_certificate_add_course_certificate($code, $name, $course, $hours, $doc, $editid);
 			if( $result == 1 ) {
 				if( $editid != "" ) {
 	                $error = '<div class="alert alert-success hide-alert">Certificate updated successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
@@ -65,7 +74,7 @@ function course_certificate_admin_certificate_ui() {
                     $hours = sanitize_text_field($data[3]);
                     $doc = sanitize_text_field($data[4]);
                       if (!empty($code) && !empty($name) && !empty($course) && !empty($hours)) {
-                        course_certificate_add_course_certificate($code, $name, $course, $hours, $doc, '');
+                        certify_certificate_add_course_certificate($code, $name, $course, $hours, $doc, '');
                         $uploaded_count++;
                     }
                     $row++;
@@ -77,7 +86,8 @@ function course_certificate_admin_certificate_ui() {
             }
         }
     }	global $wpdb;
-    $certificates = $wpdb->get_results( "SELECT * FROM certify_course_certificates");
+    $table_name = $wpdb->prefix . 'certify_certificate_management';
+    $certificates = $wpdb->get_results( "SELECT * FROM {$table_name}");
     // Safely get 'pg' from $_GET with nonce verification for admin pagination
     $cpage = 1;
     if (isset($_GET['pg']) && is_numeric($_GET['pg']) && isset($_GET['pg_nonce']) && wp_verify_nonce($_GET['pg_nonce'], 'pagination_nonce')) {
@@ -154,7 +164,7 @@ function course_certificate_admin_certificate_ui() {
 		        <?php		        $pages = ceil(count($certificates)/10);
 		        $currentpage = isset($_GET['pg']) && is_numeric($_GET['pg']) ? intval($_GET['pg']) : 1;
 		        for($i=1;$i<=$pages;$i++) { 
-		            $page_url = wp_nonce_url(admin_url('admin.php?page=certificate-codes&pg='.$i), 'pagination_nonce', 'pg_nonce');
+		            $page_url = wp_nonce_url(admin_url('admin.php?page=certify-certificate-management&pg='.$i), 'pagination_nonce', 'pg_nonce');
 		            ?>
                 <li class="page-item <?php echo esc_attr(($currentpage==$i) ? 'active' : '');?>"><a href="<?php echo esc_url($page_url);?>" class="page-link"><?php echo esc_html($i);?></a></li>
             <?php } ?>

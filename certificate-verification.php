@@ -1,6 +1,6 @@
 <?php
 /**
- * @package Certify
+ * @package Certify_Certificate_Management
  * @version 1.0
  */
 /**
@@ -10,6 +10,8 @@
  * Version: 1.0
  * Author: Amrit Kumar Chanchal
  * Author URI: https://www.linkedin.com/in/amritkumarchanchal/
+ * Requires at least: 5.0
+ * Tested up to: 6.6
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -23,23 +25,35 @@ if (! defined( 'ABSPATH' )) {
 	exit;
 }
 
-//COURSEPREFIX
+// Plugin constants - these help identify and configure the plugin
+if (!defined('CERTIFY_PLUGIN_VERSION')) {
+    define('CERTIFY_PLUGIN_VERSION', '1.0');
+}
+if (!defined('CERTIFY_PLUGIN_PATH')) {
+    define('CERTIFY_PLUGIN_PATH', plugin_dir_path(__FILE__));
+}
 
-function course_certificate_admin_assets() {
+//CERTIFYPREFIX - All our functions start with certify_certificate_ to avoid conflicts
+
+/**
+ * Load admin assets (CSS, JS) for the certificate management interface
+ * This function handles all the styling and interactive features in the admin panel
+ */
+function certify_certificate_admin_assets() {
     wp_enqueue_script('jquery');
-    // Enqueue jQuery UI CSS and JS
+    // Load jQuery UI for date picker functionality
     wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
     wp_enqueue_script('jquery-ui-js', 'https://code.jquery.com/ui/1.13.2/jquery-ui.min.js', array('jquery'), null, true);
-    // Enqueue Bootstrap 5
-    wp_enqueue_script('admin-bs', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
-    wp_enqueue_style('admin-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
-    // DataTables for Bootstrap 5
+    // Load Bootstrap 5 for modern UI components and styling
+    wp_enqueue_script('certify-admin-bs', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', array('jquery'), null, true);
+    wp_enqueue_style('certify-admin-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+    // DataTables for sortable, searchable certificate tables
     wp_enqueue_style('dataTable-css', 'https://cdn.datatables.net/1.13.10/css/dataTables.bootstrap5.min.css');
     wp_enqueue_script('dataTable-js', 'https://cdn.datatables.net/1.13.10/js/dataTables.bootstrap5.min.js', array('jquery'), null, true);
-    // Material Icons
+    // Material Icons for consistent iconography
     wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', array(), null);
     
-    // Add admin CSS inline
+    // Custom admin styling - makes the interface look professional and user-friendly
     $admin_css = "
         body { margin-top: 32px !important; }
         .table-wrapper { background: #fff; padding: 20px 25px; margin: 30px 0; border-radius: 3px; box-shadow: 0 1px 1px rgba(0,0,0,.05); }
@@ -77,10 +91,9 @@ function course_certificate_admin_assets() {
             .table-title .col-sm-6:last-child { text-align: center; margin-top: 15px; }
             .table-title .btn { margin: 5px; }
         }
-    ";
-    wp_add_inline_style('admin-css', $admin_css);
+    ";    wp_add_inline_style('certify-admin-css', $admin_css);
     
-    // Add admin JS inline
+    // JavaScript for interactive features like modals, date pickers, and table management
     $admin_js = "
         jQuery(document).ready(function($) {
             // Initialize DataTable
@@ -175,19 +188,22 @@ function course_certificate_admin_assets() {
                 $('.hide-alert').remove();
             }, 5000);
         });
-    ";
-    wp_add_inline_script('admin-bs', $admin_js);
+    ";    wp_add_inline_script('certify-admin-bs', $admin_js);
 }
-add_action('admin_enqueue_scripts', 'course_certificate_admin_assets');
+// Hook the admin assets function to load only in admin area
+add_action('admin_enqueue_scripts', 'certify_certificate_admin_assets');
 
 
-// Enqueue frontend CSS using WordPress best practices
+// Load frontend styles for the certificate search form
 add_action('wp_enqueue_scripts', function() {
     wp_enqueue_style('certify-frontend', plugin_dir_url(__FILE__).'assets/css/certify-frontend.css');
 });
 
-// Search certificate
-function course_certificate_search_form(){ 
+/**
+ * Generate the certificate search form and handle search results
+ * This creates the shortcode [certify] that users can place on any page
+ */
+function certify_certificate_search_form(){ 
 	$output = '';	$output .= '<div class="cf-search">
 		<form method="POST">
 			' . wp_nonce_field('search_certificate', 'search_nonce', true, false) . '
@@ -200,13 +216,14 @@ function course_certificate_search_form(){
 		
 		// Validate certificate code format (basic validation)
 		if (empty($code) || strlen($code) > 50) {
-			$output .= '<div class="danger">Invalid certificate code format.</div>';
-		} else {
+			$output .= '<div class="danger">Invalid certificate code format.</div>';		} else {
 			global $wpdb;
-			// Use prepared statement to prevent SQL injection
-			$rows = $wpdb->get_results( $wpdb->prepare("SELECT * FROM certify_course_certificates WHERE certificate_code = %s", $code) ); 
-			
-			if( !empty($rows) ){				foreach ( $rows as $data ){
+			// Use prepared statement to prevent SQL injection attacks
+			$table_name = $wpdb->prefix . 'certify_certificate_management';
+			$rows = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$table_name} WHERE certificate_code = %s", $code) );
+					if( !empty($rows) ){
+				// Certificate found - display the results with verification checkmark
+				foreach ( $rows as $data ){
 					$tick = '<span class="cf-tick" title="Verified"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#27ae60"/><path d="M6 10.5L9 13.5L14 7.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 					$output .= '<h1 class="rs-heading">Search Result</h1></div>';
 					$output .= '<div class="cf-result-card">
@@ -214,25 +231,33 @@ function course_certificate_search_form(){
 						<div class="cf-row"><div class="cf-label">Course</div><div class="cf-value">'.esc_html($data->course_name).'</div></div>
 						<div class="cf-row"><div class="cf-label">Hours Completed</div><div class="cf-value">'.esc_html($data->course_hours).'</div></div>
 						<div class="cf-row"><div class="cf-label">Certification No</div><div class="cf-value">'.esc_html($data->certificate_code).'</div></div>
-						<div class="cf-row"><div class="cf-label">Date of Completion</div><div class="cf-value">'.esc_html(date("d/M/Y", strtotime($data->dob))).'</div></div>
-					</div>';
-				}} else {
+						<div class="cf-row"><div class="cf-label">Date of Completion</div><div class="cf-value">'.esc_html(date("d/M/Y", strtotime($data->dob))).'</div></div>					</div>';
+				}
+			} else {
 				$output .= '<div class="danger">No result found against this code <strong>'.esc_html($code).'</strong></div>';
 			}
-		}
-	}
+		}	}
 	$output .= '</div>';
 	return $output;
 }
-add_shortcode( 'certify', 'course_certificate_search_form' );
+// Register the shortcode so users can use [certify] on their pages
+add_shortcode( 'certify', 'certify_certificate_search_form' );
 
-// Load admin menu and settings page
+// Load the admin menu and settings pages
 require_once plugin_dir_path(__FILE__) . 'admin/admin-menu.php';
 require_once plugin_dir_path(__FILE__) . 'admin/settings-page.php';
 
-// Load core functions
+// Load core database functions for certificate management
 require_once plugin_dir_path(__FILE__) . 'inc/core-functions.php';
 
-// Add activation hook to create database table
-register_activation_hook(__FILE__, 'course_certificate_certify_certificate_onActivation');
+// Set up database table when plugin is activated
+register_activation_hook(__FILE__, 'certify_certificate_certify_certificate_onActivation');
 require_once plugin_dir_path(__FILE__) . 'install.php';
+
+// Ensure table exists on every admin load (for troubleshooting)
+if (is_admin()) {
+    add_action('admin_init', function() {
+        require_once plugin_dir_path(__FILE__) . 'install.php';
+        certify_certificate_ensure_table_exists();
+    });
+}
