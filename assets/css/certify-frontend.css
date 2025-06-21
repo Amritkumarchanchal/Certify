@@ -1,0 +1,147 @@
+/* Certify plugin base frontend CSS. This file is required for WordPress inline styles to work. */
+
+.cf-search {
+    width: 700px;
+    margin: 40px auto 30px auto !important; /* Add top and bottom margin for spacing */
+    background: #f7f8fd;
+    border: 3px solid #eceefb;
+    padding: 30px;
+    border-radius: 10px;
+}
+.cf-search form {
+    display: inline-flex;
+    width: 100%;
+}
+.cf-field {
+    display: inline-block !important;
+    border: 1px solid #000 !important;
+    margin-bottom: 0px !important;
+    width: 90%;
+    padding-left: 16px;
+    height: 47px;
+}
+.cf-btn {
+    display: inline-block;
+    border: none;
+    height: 47px !important;
+    width: 200px;
+    background: #000 !important;
+    color: #fff !important;
+    min-height: 47px;
+    border-radius: 0 !important;
+}
+.success {
+    color: #155724;
+    background-color: #d4edda;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #c3e6cb;
+    border-radius: .25rem;
+}
+.danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #f5c6cb;
+    border-radius: .25rem;
+}
+@media screen and ( max-width: 768px ){
+    .cf-search{ width: 90%; }
+}
+@media screen and ( max-width: 480px ){
+    .cf-search form { display: initial; }
+    .cf-field, .cf-btn {
+        display: block !important;
+        width: 100%;
+    }
+}
+.cf-result-card {
+    max-width: 500px;
+    margin: 30px auto 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(67,93,125,0.10), 0 1.5px 4px rgba(67,93,125,0.08);
+    padding: 32px 28px 24px 28px;
+    font-family: "Varela Round", sans-serif;
+    font-size: 16px;
+    color: #222;
+}
+.cf-result-card .cf-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #eceefb;
+}
+.cf-result-card .cf-row:last-child {
+    border-bottom: none;
+}
+.cf-result-card .cf-label {
+    flex: 0 0 180px;
+    font-weight: 600;
+    color: #435d7d;
+    text-align: left;
+    letter-spacing: 0.5px;
+}
+.cf-result-card .cf-value {
+    flex: 1;
+    color: #222;
+    text-align: left;
+    font-weight: 400;
+    padding-left: 48px;
+    word-break: break-word;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.cf-result-card .cf-tick {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+.cf-result-card .cf-tick svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.rs-heading {
+    text-align: center;
+}
+.search-table {
+    border-spacing: 0 !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+    min-width: 100%;
+    border-bottom: 1px solid #ddd;
+}
+.search-table thead {
+    background-color: transparent;
+}
+.search-table thead tr th {
+    background-color: #000 !important;
+    color: #fff !important;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 15px 0px;
+}
+.search-table tbody tr td {
+    border-right: 1px solid #ddd;
+    padding: 14px 10px;
+    text-align: center;
+}
+.br-0 {
+    border-right: none !important
+}
+body {
+    overflow-x: hidden;
+}
+.btlr-10{ border-top-left-radius: 10px; }
+.btrr-10{ border-top-right-radius: 10px; }
+.bl-1{ border-left: 1px solid #ddd; }
+
